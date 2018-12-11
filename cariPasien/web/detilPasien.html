@@ -6,7 +6,7 @@ and open the template in the editor.
 -->
 <html lang="en">
     <head>
-        <title>Cari Nama Pasien</title>
+        <title>Antrian Klinik</title>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
@@ -77,54 +77,39 @@ and open the template in the editor.
         </nav>
 
         <div class="container-fluid bg-1">
-            <h3 class="margin">Cari Pasien</h3>
+            <h3 class="margin">Form Antrian Klinik</h3>
             <!--            <form onsubmit="return make_json(this);" method="POST">-->
             <div class="form-group">
                 <label for="nama">Nama :</label>
                 <input type="nama" class="form-control" id="nama" placeholder="Masukkan Nama Anda">
-                <button type="button" onclick="loadDoc()" id="btn">OK</button>
-                <div id="demo" style="margin-left: 5%"></div>
+                
             </div>
-            
+                           <div class="form-group">
+                                <label for="nik">Nik:</label>
+                                <input type="nik" class="form-control" disabled id="nik" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="nama">Nama:</label>
+                                <input type="nama" class="form-control" disabled id="nama" >
+                            </div>
             <script>
                         function loadDoc() {
-                            var xmlhttp = new XMLHttpRequest();
-                            var url = "http://206.189.38.188:8080/myrs/webresources/pasien/cariNamaPasien?nama=" + nama.value;
-                            xmlhttp.onreadystatechange = function () {
+                            var url = "http://206.189.38.188:8080/myrs/webresources/pasien/cariPasien?nik=" + nik.value;
+                            var xhttp = new XMLHttpRequest();
+                            xhttp.open("GET", url, true);
+                            xhttp.send();
+                            xhttp.onreadystatechange = function () {
                                 if (this.readyState == 4 && this.status == 200) {
-//                                    alert(this.responseText);
-                                    myFunction(this.responseText);
+                                    var objj = JSON.parse(this.responseText);
+                                    document.getElementById("nama").value = objj.nama;
+                                    document.getElementById("nik").value = objj.nik;
+                                    document.getElementById("alamat").value = objj.alamat;
+                                    document.getElementById("tanggalLahir").value = objj.tanggalLahir;
+                                    document.getElementById("kelamin").value = objj.kelamin;
                                 }
-                            }
-                            xmlhttp.open("GET", url, true);
-                            xmlhttp.send();
-                            function myFunction(response) {
-                                var arr = JSON.parse(response);
-                                var i;
-                                var out = "<table border='1'> <tr><td>NIK</td><td>Nama</td><td>Tanggal Lahir</td><td>Detail</td></tr>";
-                                for (i = 0; i < arr.length; i++) {
-                                    out += "<tr><td>" +
-                                            arr[i].nik +
-                                            "</td><td>" +
-                                            arr[i].nama +
-                                            "</td><td>" + arr[i].tanggalLahir +
-                                            "</td><td><button type=\"submit\" onclick=\"myFunction1('" + arr[i].nik + "')\">Lengkap</button></td></tr>";
-                                }
-                                out += "</table>";
-                                document.getElementById("demo").innerHTML = out;
-                            }
-                        }
-                        function myFunction1(nik) {
-                            var myWindow = window.open("detilPasien.html");
-                            setCookie("username", nik, 1);
-                        }
-                        function setCookie(cname, cvalue, exdays) {
-                            var d = new Date();
-                            d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
-                            var expires = "expires=" + d.toUTCString();
-                            document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
-                        }
+                            };
+                       
                     </script>
-          
     </body>
 </html>
